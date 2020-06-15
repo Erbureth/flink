@@ -19,8 +19,12 @@
 package org.apache.flink.runtime.metrics.groups;
 
 import org.apache.flink.metrics.CharacterFilter;
+import org.apache.flink.runtime.metrics.scope.ComponentScope;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Metric group which forwards all registration calls to a variable parent metric group that injects a variable reporter
@@ -51,7 +55,13 @@ public class FrontMetricGroup<P extends AbstractMetricGroup<?>> extends ProxyMet
 
 	@Override
 	public Map<String, String> getAllVariables() {
-		return parentMetricGroup.getAllVariables(this.settings.getReporterIndex(), this.settings.getExcludedVariables());
+		ComponentScope scope = parentMetricGroup.getComponentScope();
+		Set<String> excludedVariables = new HashSet<>();
+		excludedVariables.addAll(this.settings.getExcludedVariables());
+		if (scope != null) {
+			excludedVariables.addAll(this.settings.getExcludedComponentVariables().getOrDefault(scope, Collections.emptySet()));
+		}
+		return parentMetricGroup.getAllVariables(this.settings.getReporterIndex(), excludedVariables);
 	}
 
 	public String getLogicalScope(CharacterFilter filter) {

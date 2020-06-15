@@ -23,6 +23,7 @@ import org.apache.flink.api.common.JobID;
 import org.apache.flink.runtime.executiongraph.ExecutionAttemptID;
 import org.apache.flink.runtime.jobgraph.JobVertexID;
 import org.apache.flink.runtime.metrics.MetricRegistry;
+import org.apache.flink.runtime.metrics.scope.ComponentScope;
 import org.apache.flink.util.AbstractID;
 
 import javax.annotation.Nullable;
@@ -121,5 +122,10 @@ public class TaskManagerJobMetricGroup extends JobMetricGroup<TaskManagerMetricG
 	@Override
 	protected Iterable<? extends ComponentMetricGroup> subComponents() {
 		return tasks.values();
+	}
+
+	@Override
+	public ComponentScope getComponentScope() {
+		return ComponentScope.TASKMANAGER_JOB;
 	}
 }

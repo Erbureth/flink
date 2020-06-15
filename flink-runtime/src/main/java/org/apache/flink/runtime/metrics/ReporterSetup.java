@@ -28,6 +28,7 @@ import org.apache.flink.metrics.MetricConfig;
 import org.apache.flink.metrics.reporter.InstantiateViaFactory;
 import org.apache.flink.metrics.reporter.MetricReporter;
 import org.apache.flink.metrics.reporter.MetricReporterFactory;
+import org.apache.flink.runtime.metrics.scope.ComponentScope;
 import org.apache.flink.runtime.metrics.scope.ScopeFormat;
 
 import org.apache.flink.shaded.guava18.com.google.common.collect.Iterators;
@@ -89,17 +90,45 @@ public final class ReporterSetup {
 		return Optional.ofNullable(configuration.getString(ConfigConstants.METRICS_REPORTER_INTERVAL_SUFFIX, null));
 	}
 
-	public Set<String> getExcludedVariables() {
-		String excludedVariablesList = configuration.getString(ConfigConstants.METRICS_REPORTER_EXCLUDED_VARIABLES, null);
-		if (excludedVariablesList == null) {
+	private Set<String> parseVariableList(String variableList) {
+		if (variableList == null) {
 			return Collections.emptySet();
 		} else {
-			final Set<String> excludedVariables = new HashSet<>();
-			for (String exclusion : excludedVariablesList.split(";")) {
-				excludedVariables.add(ScopeFormat.asVariable(exclusion));
+			final Set<String> valueSet = new HashSet<>();
+			for (String variable : variableList.split(";")) {
+				valueSet.add(ScopeFormat.asVariable(variable));
 			}
-			return Collections.unmodifiableSet(excludedVariables);
+			return Collections.unmodifiableSet(valueSet);
 		}
+	}
+
+	public Set<String> getExcludedVariables() {
+		String excludedVariablesList = configuration.getString(ConfigConstants.METRICS_REPORTER_EXCLUDED_VARIABLES, null);
+		return parseVariableList(excludedVariablesList);
+	}
+
+	public Map<ComponentScope, Set<String>> getExcludedComponentVariables() {
+		final Map<ComponentScope, Set<String>> excludedComponentVariables = new HashMap<>();
+
+		String excludedVariables = configuration.getString(ConfigConstants.METRICS_REPORTER_JM_EXCLUDED_VARIABLES, null);
+		excludedComponentVariables.put(ComponentScope.JOBMANAGER, parseVariableList(excludedVariables));
+
+		excludedVariables = configuration.getString(ConfigConstants.METRICS_REPORTER_JM_JOB_EXCLUDED_VARIABLES, null);
+		excludedComponentVariables.put(ComponentScope.JOBMANAGER_JOB, parseVariableList(excludedVariables));
+
+		excludedVariables = configuration.getString(ConfigConstants.METRICS_REPORTER_TM_EXCLUDED_VARIABLES, null);
+		excludedComponentVariables.put(ComponentScope.TASKMANAGER, parseVariableList(excludedVariables));
+
+		excludedVariables = configuration.getString(ConfigConstants.METRICS_REPORTER_TM_JOB_EXCLUDED_VARIABLES, null);
+		excludedComponentVariables.put(ComponentScope.TASKMANAGER_JOB, parseVariableList(excludedVariables));
+
+		excludedVariables = configuration.getString(ConfigConstants.METRICS_REPORTER_TASK_EXCLUDED_VARIABLES, null);
+		excludedComponentVariables.put(ComponentScope.TASK, parseVariableList(excludedVariables));
+
+		excludedVariables = configuration.getString(ConfigConstants.METRICS_REPORTER_OPERATOR_EXCLUDED_VARIABLES, null);
+		excludedComponentVariables.put(ComponentScope.OPERATROR, parseVariableList(excludedVariables));
+
+		return excludedComponentVariables;
 	}
 
 	public String getName() {

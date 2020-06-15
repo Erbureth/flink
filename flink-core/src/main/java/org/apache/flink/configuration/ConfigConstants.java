@@ -1248,6 +1248,12 @@ public final class ConfigConstants {
 
 	/** The set of variables that should be excluded. */
 	public static final String METRICS_REPORTER_EXCLUDED_VARIABLES = "scope.variables.excludes";
+	public static final String METRICS_REPORTER_JM_EXCLUDED_VARIABLES = "scope.jm.variables.excludes";
+	public static final String METRICS_REPORTER_JM_JOB_EXCLUDED_VARIABLES = "scope.jm.job.variables.excludes";
+	public static final String METRICS_REPORTER_TM_EXCLUDED_VARIABLES = "scope.tm.variables.excludes";
+	public static final String METRICS_REPORTER_TM_JOB_EXCLUDED_VARIABLES = "scope.tm.job.variables.excludes";
+	public static final String METRICS_REPORTER_TASK_EXCLUDED_VARIABLES = "scope.task.variables.excludes";
+	public static final String METRICS_REPORTER_OPERATOR_EXCLUDED_VARIABLES = "scope.operator.variables.excludes";
 
 	/** @deprecated Use {@link MetricOptions#SCOPE_DELIMITER} instead. */
 	@Deprecated
