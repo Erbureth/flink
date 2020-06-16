@@ -17,8 +17,10 @@
 
 package org.apache.flink.runtime.metrics.groups;
 
+import org.apache.flink.runtime.metrics.scope.ComponentScope;
 import org.apache.flink.util.Preconditions;
 
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -32,8 +34,11 @@ public class ReporterScopedSettings {
 
 	private Set<String> excludedVariables;
 
-	public ReporterScopedSettings(int reporterIndex, char delimiter, Set<String> excludedVariables) {
+	private Map<ComponentScope, Set<String>> excludedComponentVariables;
+
+	public ReporterScopedSettings(int reporterIndex, char delimiter, Set<String> excludedVariables, Map<ComponentScope, Set<String>> excludedComponentVariables) {
 		this.excludedVariables = excludedVariables;
+		this.excludedComponentVariables = excludedComponentVariables;
 		Preconditions.checkArgument(reporterIndex >= 0);
 		this.reporterIndex = reporterIndex;
 		this.delimiter = delimiter;
@@ -49,5 +54,9 @@ public class ReporterScopedSettings {
 
 	public Set<String> getExcludedVariables() {
 		return excludedVariables;
+	}
+
+	public Map<ComponentScope, Set<String>> getExcludedComponentVariables() {
+		return excludedComponentVariables;
 	}
 }

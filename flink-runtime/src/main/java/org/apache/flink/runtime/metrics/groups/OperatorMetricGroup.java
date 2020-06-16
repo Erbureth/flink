@@ -23,6 +23,7 @@ import org.apache.flink.metrics.CharacterFilter;
 import org.apache.flink.runtime.jobgraph.OperatorID;
 import org.apache.flink.runtime.metrics.MetricRegistry;
 import org.apache.flink.runtime.metrics.dump.QueryScopeInfo;
+import org.apache.flink.runtime.metrics.scope.ComponentScope;
 import org.apache.flink.runtime.metrics.scope.ScopeFormat;
 
 import java.util.Collections;
@@ -91,5 +92,10 @@ public class OperatorMetricGroup extends ComponentMetricGroup<TaskMetricGroup> {
 	@Override
 	protected String getGroupName(CharacterFilter filter) {
 		return "operator";
+	}
+
+	@Override
+	public ComponentScope getComponentScope() {
+		return ComponentScope.OPERATROR;
 	}
 }

@@ -29,6 +29,7 @@ import org.apache.flink.metrics.MetricGroup;
 import org.apache.flink.metrics.SimpleCounter;
 import org.apache.flink.runtime.metrics.MetricRegistry;
 import org.apache.flink.runtime.metrics.dump.QueryScopeInfo;
+import org.apache.flink.runtime.metrics.scope.ComponentScope;
 import org.apache.flink.runtime.metrics.scope.ScopeFormat;
 
 import org.slf4j.Logger;
@@ -495,6 +496,17 @@ public abstract class AbstractMetricGroup<A extends AbstractMetricGroup<?>> impl
 			default:
 				return new GenericMetricGroup(registry, this, name);
 		}
+	}
+
+	/**
+	 * Return component scope for this metric group
+	 * @return enum value of ComponentScope
+	 */
+	public ComponentScope getComponentScope() {
+		if (parent != null) {
+			return parent.getComponentScope();
+		}
+		return null;
 	}
 
 	/**
